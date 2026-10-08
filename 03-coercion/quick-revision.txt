@@ -1,0 +1,113 @@
+TYPE COERCION & EQUALITY — QUICK REVISION
+
+Implicit Coercion:
+JavaScript automatically converts values between types when required by an operation.
+Example: "5" - 2 → 3 because "5" is implicitly converted to a number.
+
+Explicit Coercion:
+The programmer explicitly converts a value using functions like Number(), String(), or Boolean().
+Example: Number("42") → 42.
+
+String Conversion — ToString:
+Converts a value into a string according to ECMAScript conversion rules.
+Example: String(42) → "42", String(null) → "null".
+
+Number Conversion — ToNumber:
+Converts a value into a number; invalid numeric conversions produce NaN.
+Example: Number("42") → 42, Number("") → 0, Number("abc") → NaN.
+
+Boolean Conversion — ToBoolean:
+Converts a value into true or false based on JavaScript's truthiness rules.
+Only false, 0, -0, 0n, "", null, undefined, and NaN are falsy.
+
+Object-to-Primitive Conversion:
+When an object is used where a primitive is required, JavaScript converts the object to a primitive.
+The conversion can involve Symbol.toPrimitive, valueOf(), and toString().
+
+ToPrimitive:
+ECMAScript abstract operation that converts an object into a primitive value.
+The conversion behavior depends on the operation and its conversion hint.
+
+ToNumber:
+Internal ECMAScript operation used when a numeric value is required.
+Examples: "10" → 10, true → 1, null → 0, undefined → NaN.
+
+ToString:
+Internal ECMAScript operation used when a string representation is required.
+Examples: 10 → "10", true → "true", [] → "", [1,2] → "1,2".
+
+ToBoolean:
+Internal ECMAScript operation used in boolean contexts such as if, while, !, &&, and ||.
+Objects and non-empty strings are truthy; only JavaScript's defined falsy values become false.
+
+ToObject:
+Converts a primitive into an object wrapper when an object is required.
+Primitive property access like "hello".length uses temporary boxing internally.
+
+Abstract Equality — ==:
+Performs equality comparison using the ECMAScript Abstract Equality Comparison algorithm.
+It may perform type coercion, so 5 == "5" is true.
+
+Strict Equality — ===:
+Compares values without performing type coercion.
+For primitives, types must match and values must be equal; objects must reference the same object.
+
+Object.is():
+Performs SameValue comparison and differs from === for NaN and signed zero.
+Object.is(NaN, NaN) → true, while Object.is(+0, -0) → false.
+
+SameValue:
+An ECMAScript equality algorithm used by Object.is().
+Unlike ===, SameValue considers NaN equal to itself and distinguishes +0 from -0.
+
+SameValueZero:
+Similar to SameValue but considers +0 and -0 equal.
+It is used by APIs such as Array.prototype.includes(), Set, and Map.
+
+Truthy Values:
+A value is truthy when ToBoolean converts it to true.
+All objects, including [] and {}, are truthy.
+
+Falsy Values:
+The main falsy values are false, 0, -0, 0n, "", null, undefined, and NaN.
+document.all is a special legacy browser exception with falsy behavior.
+
+Weird Coercion Cases:
+Expressions like [] == false, "" == 0, and "0" == false are true because == performs multiple conversions.
+Always break these expressions into individual conversion steps instead of guessing.
+
+Addition (+) Coercion:
+The + operator can perform either numeric addition or string concatenation.
+1 + "2" → "12", while 1 - "2" → -1 because - is numeric-only.
+
+Unary Plus:
+Unary + explicitly performs numeric conversion on its operand.
++"42" → 42, +true → 1, +null → 0, +undefined → NaN.
+
+Logical Operator Coercion:
+&& and || use ToBoolean to decide which operand to return, but they return an operand itself rather than a boolean.
+0 || 10 → 10, while "hello" && 123 → 123.
+
+Nullish Coalescing:
+?? returns the right side only when the left side is null or undefined.
+Unlike ||, it does not treat values like 0, false, or "" as missing.
+
+Object Equality:
+Objects are compared by reference, not by their contents.
+{} === {} → false, but const a = {}; const b = a; a === b → true.
+
+Security:
+Implicit coercion with untrusted input can cause unexpected comparisons and validation bugs.
+Prefer explicit parsing, validation, and strict equality in security-sensitive code.
+
+Performance:
+Individual coercions are generally cheap, but unpredictable mixed types can make hot code harder to optimize.
+Consistent data types improve predictability, maintainability, and potential JIT optimization.
+
+Browser vs Node.js:
+Core coercion and equality rules come from ECMAScript and therefore behave consistently in browsers and Node.js.
+Browser-specific legacy behavior such as document.all does not normally exist in Node.js.
+
+Interview Mental Model:
+When you see a confusing expression, identify the operator, operand types, and whether coercion occurs.
+Then determine the exact conversion algorithm: ToPrimitive, ToNumber, ToString, or ToBoolean.

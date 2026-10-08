@@ -1,0 +1,107 @@
+JavaScript Mental Model & Ecosystem — Quick Revision
+1. JavaScript
+
+JavaScript is a high-level, dynamically typed, garbage-collected, multi-paradigm programming language. It can run in browsers, servers, mobile apps, and other environments.
+
+2. ECMAScript vs JavaScript
+
+ECMAScript is the standardized specification that defines JavaScript's language behavior. JavaScript is the practical implementation/language commonly built according to that standard.
+
+3. JavaScript Engines
+
+A JavaScript engine parses, executes, optimizes, and manages memory for JavaScript code. Examples include V8, SpiderMonkey, and JavaScriptCore.
+
+4. V8
+
+V8 is Google's JavaScript engine used by Chrome and Node.js. It uses techniques such as parsing, bytecode execution, JIT compilation, optimization, and deoptimization.
+
+5. SpiderMonkey
+
+SpiderMonkey is Mozilla's JavaScript engine used primarily by Firefox. Like other engines, it implements ECMAScript while using its own internal execution strategies.
+
+6. JavaScriptCore
+
+JavaScriptCore (JSC) is Apple's JavaScript engine used by Safari and WebKit. It is responsible for executing JavaScript according to ECMAScript semantics.
+
+7. Runtime vs Language
+
+The language defines JavaScript's syntax and behavior, while the runtime provides the environment in which JavaScript executes. Runtime = engine + host capabilities/infrastructure.
+
+8. Browser Runtime vs Node.js Runtime
+
+Browsers provide APIs like document, window, and Web APIs, while Node.js provides APIs like fs, process, and Buffer. Both can use JavaScript but provide different host environments.
+
+9. JavaScript Host Environment
+
+A host environment embeds a JavaScript engine and provides additional capabilities outside the language itself. Examples include browsers, Node.js, Deno, Bun, and React Native.
+
+10. ECMAScript Specification
+
+The ECMAScript specification formally defines JavaScript language behavior. It specifies things like types, operators, objects, functions, promises, modules, and execution semantics.
+
+11. TC39
+
+TC39 is the technical committee responsible for evolving the ECMAScript standard. It evaluates and develops new JavaScript language features through a proposal process.
+
+12. ECMAScript Editions
+
+ECMAScript evolves through yearly specifications such as ES2015, ES2016, ES2017, etc. ES2015/ES6 was a particularly major release that introduced many modern JavaScript features.
+
+13. Standards and Proposals
+
+New JavaScript features typically progress through TC39 proposal stages from Stage 0 to Stage 4. Stage 4 means the proposal has satisfied the requirements for inclusion in the standard.
+
+14. Strict Mode
+
+Strict mode enables safer JavaScript behavior using "use strict". It prevents or changes several error-prone behaviors, such as accidental global variables.
+
+15. Sloppy Mode
+
+Sloppy mode is the traditional non-strict JavaScript behavior. It permits certain legacy behaviors that strict mode intentionally disallows.
+
+16. JavaScript Execution Environments
+
+JavaScript can execute in browsers, Node.js, mobile environments, server runtimes, and embedded systems. The available APIs depend on the host environment.
+
+17. Single-Threaded Nature
+
+JavaScript execution for a given execution agent traditionally runs on a single main thread. This means synchronous JavaScript cannot execute two pieces of code simultaneously on that same thread.
+
+18. JavaScript Concurrency Model
+
+JavaScript achieves concurrency through asynchronous execution, tasks, queues, and the event loop rather than automatically creating a thread for every operation. This allows it to handle I/O without blocking the main execution thread.
+
+19. Interpreted vs Compiled
+
+Modern JavaScript cannot accurately be described as simply interpreted or compiled. Engines use a combination of execution, intermediate representations, JIT compilation, optimization, and deoptimization.
+
+20. JIT Compilation
+
+JIT means Just-In-Time compilation, where the engine compiles frequently executed code during runtime. It can optimize code based on observed behavior and later deoptimize when its assumptions become invalid.
+
+21. Dynamically Typed
+
+JavaScript is dynamically typed because a variable can hold values of different types during execution. The value has a type, rather than the variable having a permanently fixed type.
+
+let x = 10;
+x = "hello";
+
+22. JavaScript Type System
+
+JavaScript has primitive types such as string, number, bigint, boolean, undefined, symbol, and null, plus objects. Its type system also includes concepts such as coercion, equality, and object wrappers.
+
+23. Weak vs Strong Typing
+
+"Weak vs strong typing" is not a precisely defined binary classification. JavaScript is better described as dynamically typed with significant implicit type coercion.
+
+24. Dynamic vs Static Typing
+
+Dynamic typing performs much of its type checking at runtime, while static typing checks types before execution/at compile time. JavaScript is dynamically typed; TypeScript adds static type checking on top of JavaScript.
+
+25. Garbage-Collected Language
+
+JavaScript automatically manages memory using garbage collection rather than requiring developers to manually free objects. However, memory leaks and excessive allocation can still occur.
+
+26. Garbage Collection
+
+The garbage collector identifies objects that are no longer reachable and eventually reclaims their memory. GC itself consumes resources, so object allocation, retention, and memory usage still matter for performance.

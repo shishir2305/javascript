@@ -1,0 +1,262 @@
+JAVASCRIPT QUICK REVISION NOTES
+===============================
+
+1. JAVASCRIPT
+JavaScript is a high-level, dynamically typed, prototype-based programming language.
+ECMAScript defines the language; engines like V8 execute it, while browsers/Node.js provide runtime APIs.
+
+2. JAVASCRIPT EXECUTION
+JS source code is parsed and executed by a JavaScript engine.
+Modern engines use interpretation + JIT compilation to optimize frequently executed code.
+
+3. JIT COMPILATION
+JIT (Just-In-Time) compilation compiles/optimizes code during runtime.
+The engine observes runtime behavior and generates optimized machine code for hot code.
+
+4. DYNAMIC TYPING
+JavaScript is dynamically typed because types are determined at runtime.
+Variables do not have types; the values stored in them have types.
+
+5. GARBAGE COLLECTION
+JavaScript automatically removes objects that are no longer reachable.
+Modern engines mainly use tracing garbage collection based on object reachability.
+
+6. let
+let is block-scoped and can be reassigned.
+It cannot be redeclared in the same scope and has a Temporal Dead Zone.
+
+7. const
+const is block-scoped and cannot be reassigned after initialization.
+The binding is constant, but objects/arrays stored in it can still be mutated.
+
+8. var
+var is function-scoped, can be redeclared and reassigned.
+It is legacy syntax and should generally be avoided in modern JavaScript.
+
+9. VARIABLE DECLARATION
+Declaration creates a variable binding.
+Initialization gives it its first value, while assignment changes the value later.
+
+10. TEMPORAL DEAD ZONE
+TDZ is the period between entering a scope and initializing a let/const/class binding.
+Accessing the variable during TDZ causes ReferenceError.
+
+11. VARIABLE SHADOWING
+Shadowing happens when an inner scope declares a variable with the same name as an outer variable.
+The inner variable is used within that inner scope.
+
+12. GLOBAL VARIABLES
+Global variables are accessible from the global scope.
+In browsers, the global object is commonly window; in Node.js, it is global.
+
+13. globalThis
+globalThis provides a standard way to access the global object across JavaScript environments.
+It works across browsers, Node.js, workers, and other JS environments.
+
+14. JAVASCRIPT DATA TYPES
+JavaScript has 7 primitive types:
+string, number, bigint, boolean, undefined, null, symbol.
+Everything else belongs to the object category.
+
+15. STRING
+Strings represent text and are immutable.
+Common methods include slice(), includes(), indexOf(), split(), replace(), trim(), and toUpperCase().
+
+16. NUMBER
+JavaScript Number uses IEEE-754 double-precision floating-point representation.
+Safe integer range is -(2^53 - 1) to (2^53 - 1).
+
+17. BIGINT
+BigInt represents integers larger than Number's safe integer range.
+BigInt and Number cannot normally be mixed directly in arithmetic.
+
+18. BOOLEAN
+Boolean has only two values: true and false.
+It is mainly used for conditions, comparisons, and logical operations.
+
+19. undefined
+undefined usually means a value has not been assigned or does not exist.
+Example: a declared variable without an initial value contains undefined.
+
+20. null
+null explicitly represents the intentional absence of a value.
+typeof null is "object" due to a historical JavaScript behavior.
+
+21. SYMBOL
+Symbol creates unique primitive values.
+It is commonly used for unique object property keys.
+
+22. OBJECT
+Objects store data as key-value properties and are mutable.
+Objects can inherit properties through the prototype chain.
+
+23. ARRAY
+Arrays are ordered, zero-indexed collections.
+They are technically objects and provide methods such as map(), filter(), reduce(), find(), push(), and pop().
+
+24. FUNCTION
+Functions are first-class objects in JavaScript.
+They can be stored in variables, passed as arguments, returned from functions, and have properties.
+
+25. DATE
+Date represents a point in time.
+Internally, it mainly represents time as milliseconds relative to the Unix epoch.
+
+26. REGEXP
+Regular expressions are patterns used for searching, matching, validating, and replacing text.
+They can be created using regex literals or the RegExp constructor.
+
+27. MAP
+Map stores key-value pairs and allows keys of any type.
+It preserves insertion order and is useful for key-based lookup.
+
+28. SET
+Set stores unique values.
+It is useful for removing duplicates and checking whether a value exists.
+
+29. TYPED ARRAYS
+Typed arrays represent binary data using fixed-width numeric types.
+Examples include Uint8Array, Int32Array, and Float64Array.
+
+30. PRIMITIVE VS OBJECT
+Primitive values are immutable values such as string, number, boolean, etc.
+Objects are mutable and variables store reference values pointing to objects.
+
+31. PASS-BY-VALUE
+JavaScript is technically pass-by-value.
+When an object is passed, the copied value is a reference to the same object.
+
+32. VALUE SEMANTICS
+For primitives, assignment copies the actual value.
+Changing one variable does not affect another variable holding the same primitive value.
+
+33. REFERENCE SEMANTICS
+When objects are assigned, the reference value is copied.
+Both variables can therefore point to the same object.
+
+34. MUTABLE VS IMMUTABLE
+Primitive values are immutable and cannot be changed in-place.
+Objects, arrays, maps, and sets are mutable and their contents can be changed.
+
+35. typeof
+typeof returns a string describing the type/category of a value.
+Important cases: typeof null === "object", typeof [] === "object", typeof function(){} === "function".
+
+36. instanceof
+instanceof checks whether a constructor's prototype exists in an object's prototype chain.
+It can have problems with objects created in different JavaScript realms.
+
+37. Object.prototype.toString()
+Object.prototype.toString.call(value) can identify built-in object types.
+Example: Object.prototype.toString.call([]) returns "[object Array]".
+
+38. Array.isArray()
+Array.isArray() is the recommended way to check whether a value is an array.
+It works correctly even for arrays created in different realms.
+
+39. ARITHMETIC OPERATORS
+Arithmetic operators include +, -, *, /, %, and **.
+The + operator is special because it can perform numeric addition or string concatenation.
+
+40. ASSIGNMENT OPERATORS
+Assignment operators store values in variables or properties.
+Examples: =, +=, -=, *=, /=, %=.
+
+41. COMPARISON OPERATORS
+=== performs strict equality without type coercion.
+== performs equality with type coercion; === is generally preferred.
+
+42. LOGICAL OPERATORS
+&&, ||, and ! are logical operators.
+&& and || return operands rather than necessarily returning true/false.
+
+43. SHORT-CIRCUIT EVALUATION
+&& stops when it finds a falsy value.
+|| stops when it finds a truthy value, allowing conditional execution and default values.
+
+44. NULLISH COALESCING (??)
+?? uses the right-hand value only when the left side is null or undefined.
+Unlike ||, it considers 0, false, and "" as valid values.
+
+45. OPTIONAL CHAINING (?.)
+?. safely accesses properties, methods, or elements when an intermediate value is null/undefined.
+Instead of throwing an error, it returns undefined.
+
+46. BITWISE OPERATORS
+Bitwise operators work on integer bit representations.
+Common operators are &, |, ^, ~, <<, >>, and >>>.
+
+47. UNARY OPERATORS
+Unary operators operate on one operand.
+Examples include typeof, !, +, -, ~, delete, and void.
+
+48. TERNARY OPERATOR
+The ternary operator is a compact conditional expression.
+Syntax: condition ? valueIfTrue : valueIfFalse.
+
+49. in OPERATOR
+The in operator checks whether a property exists on an object or anywhere in its prototype chain.
+It can return true even when the property's value is undefined.
+
+50. delete
+delete removes a property from an object.
+It is different from assigning undefined and can have performance implications for object optimization.
+
+51. new
+new creates an object, connects it to the constructor's prototype, calls the constructor with the new object as this, and returns the resulting object.
+It is commonly used with classes and constructor functions.
+
+52. OPERATOR PRECEDENCE
+Operator precedence determines how operators are grouped in an expression.
+Use parentheses when needed to make evaluation order clear.
+
+53. TYPE COERCION
+Type coercion is the conversion of one type to another during an operation.
+It can happen explicitly or implicitly, especially with +, ==, comparisons, and boolean conditions.
+
+54. OBJECT EQUALITY
+Objects are compared by identity/reference, not by their contents.
+Two separately created objects with identical properties are still different objects.
+
+55. OBJECT MUTATION
+Mutation changes the contents of an existing object.
+Example: user.age = 21 changes the existing object.
+
+56. OBJECT REASSIGNMENT
+Reassignment changes what a variable points to.
+A const object cannot be reassigned, but its properties can still be mutated.
+
+57. PROTOTYPE CHAIN
+Objects can inherit properties and methods from other objects through prototypes.
+Property lookup continues through the prototype chain when the property is not found directly.
+
+58. BROWSER VS NODE.JS
+JavaScript language features come from ECMAScript.
+Browser APIs like DOM and fetch are provided by browsers, while Node.js provides APIs such as fs, process, and networking.
+
+59. JAVASCRIPT ENGINE
+A JavaScript engine parses, executes, optimizes, and manages memory for JavaScript code.
+Examples include V8, SpiderMonkey, and JavaScriptCore.
+
+60. CORE MENTAL MODEL
+JavaScript:
+Source Code
+    ↓
+Parsing
+    ↓
+Execution
+    ↓
+Interpreter / JIT
+    ↓
+Machine Code
+    ↓
+Runtime
+
+Remember:
+Variables hold bindings to values.
+Primitive values are immutable.
+Objects are mutable.
+JavaScript is dynamically typed.
+JavaScript is technically pass-by-value.
+Modern engines use JIT optimization.
+Garbage collection removes unreachable objects.

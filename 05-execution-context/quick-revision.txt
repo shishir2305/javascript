@@ -1,0 +1,137 @@
+JAVASCRIPT EXECUTION CONTEXT — REVISION NOTES
+
+1. Execution Context
+   An execution context is the specification-defined environment in which JavaScript code is evaluated and executed.
+   It tracks execution state, lexical environments, and relevant information such as the value of `this`.
+
+2. Global Execution Context (GEC)
+   The global execution context is established for top-level script execution and provides access to the appropriate global environment.
+   Global declarations, top-level `this`, and scope behavior differ between browser scripts, ES modules, and Node.js CommonJS.
+
+3. Function Execution Context (FEC)
+   A function execution context is associated with a function invocation and manages its parameters, local bindings, and execution state.
+   Each invocation has its own logical execution state, while variable lookup follows the function's lexical environment.
+
+4. Eval Execution Context
+   An eval execution context is associated with code evaluated through `eval()`, with behavior depending on direct or indirect evaluation.
+   Direct eval can access surrounding lexical bindings, whereas indirect eval uses global evaluation semantics; avoid eval with untrusted input.
+
+5. Execution Context Stack (Call Stack)
+   The call stack tracks active synchronous function calls using a last-in, first-out (LIFO) execution model.
+   A function call adds an active frame conceptually, and returning or propagating an exception removes active execution frames.
+
+6. Creation Phase
+   The creation phase is a teaching model for declaration instantiation, where bindings and relevant environments are established.
+   `var`, `let`, `const`, and function declarations have different initialization rules, explaining hoisting and the temporal dead zone.
+
+7. Execution Phase
+   The execution phase is a teaching model for evaluating statements in program order after the necessary bindings are established.
+   Assignments, function calls, expressions, and return statements execute according to JavaScript's language semantics.
+
+8. Variable Creation
+   `var` bindings are initialized to `undefined`, while `let` and `const` bindings remain uninitialized until their declarations execute.
+   `let` and `const` cannot be accessed during their temporal dead zone, and `const` must be initialized when declared.
+
+9. Function Creation
+   Function declarations are initialized during declaration instantiation, so they can generally be called before their textual definitions.
+   Function expressions and arrow functions become available through their variable bindings when the corresponding initialization executes.
+
+10. `this` Binding
+    For ordinary functions, `this` generally depends on the call form, including method calls and explicit binding through `call`, `apply`, or `bind`.
+    Arrow functions do not have their own `this`; they capture it lexically from their surrounding context.
+
+11. Lexical Environment
+    A lexical environment associates identifiers with bindings and references an outer environment for further variable lookup.
+    Lexical environments underpin block scope, closures, scope chaining, and the resolution of variable references.
+
+12. Variable Environment
+    The VariableEnvironment component is useful for understanding `var` and function declarations during execution-context setup.
+    Its relationship with the lexical environment depends on the construct; they are specification concepts, not necessarily separate objects.
+
+13. Outer Environment
+    An outer environment reference connects an environment to its enclosing lexical environment.
+    When an identifier is not found locally, JavaScript follows these links to find the corresponding binding or reports an unresolved reference.
+
+14. Scope Chain
+    The scope chain is the sequence of lexical environments searched when JavaScript resolves an identifier.
+    JavaScript uses lexical scoping, meaning variable lookup depends on where a function is defined rather than where it is called.
+
+15. Execution Context Lifecycle
+    A function's execution begins, evaluates its statements, and completes through a return or abrupt completion such as an exception.
+    Its context stops being active after completion, but bindings may remain reachable when retained by closures.
+
+16. Hoisting
+    Hoisting describes observable behavior caused by declaration instantiation; JavaScript does not literally move declarations to the top.
+    Function declarations are initialized early, `var` starts as `undefined`, and `let`/`const` remain uninitialized until their declarations execute.
+
+17. Temporal Dead Zone (TDZ)
+    The temporal dead zone is the period between entering a scope and initializing a `let` or `const` binding.
+    Accessing that binding during the TDZ throws a `ReferenceError`, including when using `typeof` on the uninitialized lexical binding.
+
+18. Closures
+    A closure is a function that retains access to the relevant lexical bindings from its surrounding environment.
+    Closures enable private state, callbacks, and function factories, but can retain memory while their references remain reachable.
+
+19. Asynchronous Execution
+    Promises, timers, and host event loops schedule future work without interrupting currently executing synchronous code.
+    Promise reactions run as microtasks, while timers use host scheduling; `await` can suspend an async function until its continuation resumes.
+
+20. Performance and Memory
+    Deep recursion can overflow the call stack, and closures can retain large objects as long as their captured bindings remain reachable.
+    Avoid unsafe `eval()`, unnecessary retained references, and long-running synchronous work; profile real bottlenecks before optimizing.
+
+21. Browser vs Node.js
+    Browser scripts, browser ES modules, Node.js CommonJS, and Node.js ES modules differ in global bindings and top-level `this`.
+    Always consider the execution environment and module format when reasoning about scope, globals, and asynchronous scheduling.
+
+22. Call Chain vs Scope Chain
+    The call chain represents which functions invoke other functions and determines the order of active synchronous execution.
+    The scope chain determines where identifiers are resolved, so a caller's local variables are not automatically visible to the called function.
+
+23. Function Return and Closures
+    When a function returns, its execution context is no longer active on the call stack.
+    A closure can still access captured bindings afterward, so the lifetime of captured data can outlast the function invocation.
+
+24. Exception Propagation
+    Throwing an exception causes abrupt completion and transfers control toward a matching exception handler.
+    If no handler exists in the current function, the exception propagates through callers until caught or ultimately reported as uncaught.
+
+25. Declaration Instantiation
+    ECMAScript uses declaration-instantiation algorithms to establish bindings before executing relevant statements.
+    The exact behavior varies across scripts, modules, functions, and eval code, so hoisting rules must be understood by declaration type.
+
+26. Environment Records
+    An environment record is a specification structure that manages identifier bindings within a lexical environment.
+    Different environment-record types support different behaviors, including declarative bindings, object-backed bindings, functions, and modules.
+
+27. Function Lexical Environment
+    A function's lexical environment is connected to the environment in which the function was defined, supporting lexical variable resolution.
+    When the function executes, its local bindings are established while references to outer environments enable closures.
+
+28. Global Object vs Global Lexical Bindings
+    In a browser classic script, top-level `var` generally creates a global-object property, whereas top-level `let` and `const` do not.
+    ES modules and Node.js CommonJS have module-scoped top-level declarations, so global-object behavior must not be generalized across environments.
+
+29. Strict Mode and `this`
+    In strict mode, an ordinary function called without a receiver has `this` equal to `undefined`; non-strict calls can substitute the global value.
+    Strict mode also restricts direct eval's scope effects, making some declarations local to the evaluated code rather than the caller.
+
+30. Engine Internals and Optimization
+    Execution contexts are language-level concepts; engines such as V8 may use optimized internal structures instead of literal context objects.
+    JIT compilation, inlining, and other optimizations may change implementation details while preserving JavaScript's observable behavior.
+
+31. Recursion and Stack Overflow
+    Each recursive call can add another active call frame, and excessive recursion can exceed the engine's stack limit.
+    For very deep traversals, consider iterative algorithms and explicit stacks to control memory use and avoid call-stack overflow.
+
+32. Closure Memory Retention
+    A closure can keep captured objects reachable even after the function that created it has completed.
+    Release unnecessary references and clean up long-lived event listeners or subscriptions to prevent unintended memory retention.
+
+33. Event Loop and Async Continuations
+    Synchronous code runs to completion before queued asynchronous callbacks get their turn on the same JavaScript thread.
+    Promise reactions use microtasks, timers use host scheduling, and `await` resumes an async function through promise-based continuation handling.
+
+34. Core Interview Mental Model
+    Execution contexts describe active execution state, while the call stack represents nested synchronous calls.
+    Lexical environments resolve variable names, declaration instantiation explains hoisting, and `this` follows its own binding rules.

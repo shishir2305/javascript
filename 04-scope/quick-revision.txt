@@ -1,0 +1,74 @@
+GLOBAL SCOPE
+Global scope is the outermost scope. Browser scripts, ES modules, Node CommonJS, and Node ES modules have different global/module behavior.
+
+FUNCTION SCOPE
+var is function-scoped. A var declared inside a block is still accessible throughout its containing function.
+
+BLOCK SCOPE
+let, const, and class are block-scoped. Blocks are created by {}, if, for, while, try/catch, etc.
+
+LEXICAL SCOPE
+JavaScript uses lexical scope: variable lookup depends on where code is written, not where a function is called.
+
+DYNAMIC SCOPE
+JavaScript does not use dynamic scope. Dynamic scope would resolve variables based on the call stack.
+
+SCOPE CHAIN
+Identifier lookup searches the current lexical environment and then follows outer environments until the binding is found or a ReferenceError occurs.
+
+LEXICAL ENVIRONMENT
+A specification-level structure containing an Environment Record and a reference to an outer Lexical Environment.
+
+ENVIRONMENT RECORD
+Stores identifier bindings. Important types include Declarative, Object, Function, Global, and Module Environment Records.
+
+DECLARATIVE ENVIRONMENT RECORD
+Stores bindings such as let, const, class, function declarations, and other lexical bindings without representing them as object properties.
+
+OBJECT ENVIRONMENT RECORD
+Uses an object to provide bindings. It is historically important for constructs such as with.
+
+GLOBAL ENVIRONMENT RECORD
+Special global environment containing object-backed and declarative global bindings.
+
+OUTER ENVIRONMENT REFERENCE
+Each lexical environment conceptually links to its outer environment, forming the scope chain.
+
+VARIABLE ENVIRONMENT
+Specification concept historically associated with var bindings. Do not assume it is a literal separate object inside engines such as V8.
+
+LEXICAL ENVIRONMENT VS VARIABLE ENVIRONMENT
+A useful model is let/const/class → LexicalEnvironment and var → VariableEnvironment, but these are specification abstractions, not necessarily physical engine objects.
+
+SCOPE RESOLUTION
+JavaScript resolves an identifier by searching the current lexical scope and then progressively outer lexical scopes.
+
+SHADOWING
+An inner scope declaring the same name as an outer scope hides the outer binding during lookup.
+
+ILLEGAL SHADOWING
+let x followed by var x in a nested block can produce SyntaxError because var belongs to the surrounding function/global variable scope.
+
+CLOSURE
+A closure occurs when a function retains access to bindings from its surrounding lexical environments after the outer function has returned.
+
+NESTED SCOPES
+Scopes can be nested. Lookup proceeds from the current scope outward through lexical environments.
+
+MODULE SCOPE
+ES modules have their own lexical scope and do not automatically place top-level declarations on the global object.
+
+MODULE LIVE BINDINGS
+ES module imports reference live exported bindings rather than independent copied values.
+
+TDZ
+let and const bindings exist before initialization but cannot be accessed until initialization, producing ReferenceError during the Temporal Dead Zone.
+
+HOISTING
+var bindings are initialized to undefined during environment setup; let/const bindings exist but remain uninitialized until their declaration executes.
+
+CLOSURE + MEMORY
+A closure can keep objects reachable through captured bindings, preventing garbage collection while the closure remains reachable.
+
+LEXICAL SCOPE VS CALL STACK
+The scope chain is determined by lexical structure, while the call stack represents currently executing function calls. They are different concepts.

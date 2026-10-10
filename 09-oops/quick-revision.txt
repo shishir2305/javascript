@@ -1,0 +1,57 @@
+CLASSES & OBJECT-ORIENTED JAVASCRIPT — QUICK REVISION
+
+1. Classes: Classes provide syntax for defining object initialization, methods, fields, and inheritance. JavaScript classes use the prototype system internally.
+
+2. Constructors: The constructor initializes an instance. A derived constructor must call super() before accessing this.
+
+3. Instance methods: Ordinary class methods live on Class.prototype and are shared by instances. Their this depends on how they are called.
+
+4. Static methods: Static methods belong to the class constructor, not its instances. Use them for class-level operations and factory methods.
+
+5. Public fields: Public fields are own properties initialized on each instance. Object-valued fields receive separate objects per instance.
+
+6. Private fields: Fields declared with # are enforced by JavaScript's private-name mechanism. They cannot be accessed through ordinary property syntax.
+
+7. Getters: Getters expose computed values using property-access syntax. Keep them predictable and avoid expensive hidden operations.
+
+8. Setters: Setters control property assignments and can validate input before updating state. Use methods for complex operations or side effects.
+
+9. Inheritance: Inheritance lets a subclass reuse and specialize a parent class's behavior through prototype relationships.
+
+10. extends: extends establishes instance-prototype inheritance and constructor inheritance between the subclass and superclass.
+
+11. super: super() invokes the parent constructor in a derived constructor. super.method() accesses a parent method while preserving the current receiver.
+
+12. Method overriding: A subclass can define a method with the same name as an inherited method. Normal lookup selects the subclass implementation.
+
+13. Polymorphism: Polymorphism allows different objects to respond to the same operation differently. JavaScript commonly uses duck typing.
+
+14. Encapsulation: Encapsulation protects internal state and maintains invariants by controlling access through a public interface.
+
+15. Abstraction: Abstraction exposes essential operations while hiding implementation details. It reduces the complexity consumers must understand.
+
+16. Composition vs inheritance: Inheritance models an is-a relationship; composition models has-a or uses-a relationships. Prefer composition for combining independent capabilities.
+
+17. Mixins: Mixins combine reusable behavior with classes or objects. Watch for naming conflicts, implicit dependencies, and complicated prototype chains.
+
+18. instanceof: instanceof normally checks whether a constructor's prototype occurs in an object's prototype chain. Cross-realm objects and custom Symbol.hasInstance can affect results.
+
+19. Class fields: Instance fields create per-instance state, while static fields belong to the class. Field initialization order matters, particularly during inheritance.
+
+20. Private class fields: Private fields restrict access to their declaring class's private names. Subclasses cannot directly access a parent's private fields.
+
+21. Static initialization blocks: Static blocks perform complex class-level initialization during class evaluation. They can access private static members.
+
+22. Classes vs factory functions: Classes naturally support shared prototype methods and inheritance. Factories offer flexible construction and closure-based encapsulation.
+
+23. Prototype vs instance methods: Prototype methods share one function across instances. Instance function fields allocate separate functions and can preserve lexical this.
+
+24. Encapsulation vs flexibility: Encapsulation protects invariants, while flexibility supports extension and integration. Choose the level of privacy appropriate to the API.
+
+25. Performance: Stable object layouts and shared methods can help efficiency. Measure real workloads instead of assuming a syntax choice is always faster.
+
+26. Security: Private fields do not replace authorization or validation. Guard against prototype pollution, unsafe input, and unintended shared mutable state.
+
+27. Browser vs Node.js: Class semantics come from ECMAScript. Runtime APIs, module environments, realm boundaries, and state-sharing patterns differ.
+
+28. Design principle: Use classes for coherent instance models, composition for independent capabilities, and abstraction to keep public interfaces small and stable.

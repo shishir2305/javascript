@@ -1,0 +1,139 @@
+1. What is `this`?
+`this` is a special value whose behavior depends on the function type and invocation; ordinary functions generally depend on how they are called.
+Arrow functions inherit `this` lexically from their surrounding environment.
+
+2. Global `this`
+In classic browser scripts, top-level `this` is usually `window`; in ES modules, it is `undefined`.
+In Node.js CommonJS, top-level `this` initially refers to `module.exports`, not `globalThis`.
+
+3. Function `this`
+An ordinary function's `this` depends on its invocation and strict-mode behavior.
+A plain call uses `undefined` in strict mode and the global object in non-strict mode.
+
+4. Method `this` (Implicit Binding)
+In `obj.method()`, `this` normally refers to `obj`, the receiver of the method call.
+Extracting the method into a variable loses the original receiver unless it is explicitly preserved.
+
+5. Constructor `this`
+When called with `new`, a constructor receives a newly created instance as `this`.
+An explicitly returned object or function replaces the instance; a primitive return value does not.
+
+6. Arrow-Function `this`
+Arrow functions do not create their own `this`; they inherit it from the surrounding lexical environment.
+`call()`, `apply()`, and `bind()` cannot change an arrow function's `this`.
+
+7. Class `this`
+A class constructor initializes the new instance through `this`, and class code runs in strict mode.
+Instance methods normally live on the prototype, so extracting a method can lose its receiver.
+
+8. Static Class Methods
+A static method called as `ClassName.method()` receives the class constructor as `this`.
+Static methods belong to the class itself, not automatically to its instances.
+
+9. call()
+`fn.call(obj, a, b)` invokes `fn` immediately with `obj` as `this` and individual arguments.
+Strict-mode functions preserve the supplied receiver; non-strict functions apply default substitution rules.
+
+10. apply()
+`fn.apply(obj, [a, b])` invokes `fn` immediately with `obj` as `this` and an array-like argument list.
+Use it when arguments are already collected into an array-like structure; spread syntax is often a modern alternative.
+
+11. bind()
+`fn.bind(obj, a)` returns a new function with a bound `this` and optional preset arguments; it does not invoke immediately.
+Repeated binding cannot replace an existing bound `this` during ordinary calls, but additional arguments can be preset.
+
+12. Explicit Binding
+`call()`, `apply()`, and `bind()` explicitly specify `this` for ordinary functions, subject to special invocation rules.
+Arrow functions ignore their supplied `thisArg`, while construction of a bound function ignores its bound receiver.
+
+13. Implicit Binding
+Calling `obj.method()` normally makes `obj` the receiver, so `this` refers to `obj`.
+For nested objects, the immediate receiver matters: `a.b.method()` gives `this === a.b`, not `a`.
+
+14. Default Binding
+A plain ordinary-function call uses `undefined` for `this` in strict mode and the global object in non-strict mode.
+Default binding occurs when no method receiver, explicit receiver, or constructor invocation establishes another binding.
+
+15. Constructor Binding
+`new Fn()` creates an instance and uses it as `this` while executing a constructible function.
+A bound constructor retains preset arguments, but its bound `this` is ignored during construction.
+
+16. Lexical `this`
+An arrow function captures `this` from its surrounding lexical environment rather than its call site.
+Its `this` remains unchanged even when invoked with `call()`, `apply()`, or `bind()`.
+
+17. `this` Inside Callbacks
+Passing `obj.method` directly as a callback can lose `obj` as the receiver because the callback may be called as a plain function.
+Use `() => obj.method()` or `obj.method.bind(obj)` when the callback must preserve the intended receiver.
+
+18. `this` Inside Nested Functions
+A nested ordinary function has its own `this` rules and does not automatically inherit the outer function's receiver.
+Use an arrow function to inherit lexical `this`, or capture the outer receiver in a variable.
+
+19. `this` with setTimeout()
+Passing `obj.method` directly to `setTimeout()` does not preserve `obj` as the method receiver.
+Use `setTimeout(() => obj.method(), delay)` or `setTimeout(obj.method.bind(obj), delay)`.
+
+20. `this` with Event Listeners
+An ordinary DOM event listener generally receives the registered element as `this`, matching `event.currentTarget` during execution.
+An arrow listener inherits lexical `this`; use `event.currentTarget` when you explicitly need the event's current element.
+
+21. Losing `this`
+Extracting a method, destructuring it, or passing it as a callback can remove its original receiver.
+Fix the issue with an explicit method call, a bound function, or an arrow wrapper.
+
+22. Parentheses and Comma Operator
+Parentheses around `obj.method` preserve its reference, so `(obj.method)()` retains the receiver.
+The comma operator produces the function value without the original receiver, so `(0, obj.method)()` behaves like a plain call.
+
+23. Getters and Inheritance
+A getter's `this` normally refers to the object used as the receiver during property access.
+An inherited method called as `child.method()` receives `child` as `this`, even if the method is stored on the parent.
+
+24. Performance and Memory
+Prototype methods are shared across instances, while arrow-function class fields and bound methods generally create per-instance functions.
+Choose based on binding requirements and memory trade-offs; benchmark realistic workloads before optimizing.
+
+25. ECMAScript Internals
+Function environment records and `[[ThisMode]]` explain lexical, strict, and global `this` behavior.
+Member references preserve method receivers, while ordinary function calls determine `this` through their invocation rules.
+
+26. Browser vs Node.js
+Classic browser scripts, browser ES modules, Node.js CommonJS, and Node.js ES modules have different top-level `this` behavior.
+Strict-mode rules and arrow-function lexical binding remain important across environments, while host callback behavior can differ.
+
+27. Strict Mode and Explicit Receivers
+Strict-mode ordinary functions preserve explicit `null`, `undefined`, and primitive receivers passed through `call()` or `apply()`.
+Non-strict ordinary functions substitute nullish receivers with the global object and box primitive receivers where applicable.
+
+28. Binding Strategies and Optimization
+Prototype methods minimize duplicated function objects; arrow fields and bound methods simplify stable callback binding.
+Closures and repeated function creation can add allocations or retain references, so optimize only when measurements justify it.
+
+29. Security Implications
+Never trust `this`, its properties, or a caller-supplied object as proof of identity or authorization.
+Enforce permissions using trusted server-side identity, validated inputs, and explicit access-control checks.
+
+30. `this` with Optional Chaining
+`obj.method?.()` conditionally invokes the method while preserving `obj` as the receiver when it exists.
+Extracting the method first, as in `const fn = obj.method; fn?.()`, does not preserve the original receiver.
+
+31. `this` with `super`
+`super.method()` resolves a method through the parent prototype while retaining the current instance as `this`.
+A derived class constructor must call `super()` before accessing its own `this`.
+
+32. Constructor Return Values
+A constructor returning an object or function explicitly replaces the newly created instance; returning a primitive does not.
+Returning `null` is a primitive return, so it does not replace the instance when using a normal constructor function.
+
+33. `this` and API Design
+Do not assume a callback will be invoked with the receiver it had when passed to an API.
+Document callback semantics and use explicit arguments or stable binding when the intended context matters.
+
+34. Time and Space Complexity
+Using `call()`, `apply()`, or `bind()` does not inherently change an algorithm's Big-O complexity.
+Binding and closure creation can introduce memory allocations, but actual runtime costs depend on the engine and workload.
+
+35. Interview Debugging Strategy
+Identify the function type, exact call expression, receiver, strict-mode rules, and whether binding was lost.
+For output questions, determine `this` before evaluating the function body, then trace property access and return behavior.

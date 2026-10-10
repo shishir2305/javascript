@@ -1,0 +1,177 @@
+JAVASCRIPT PROTOTYPE SYSTEM — QUICK REVISION NOTES
+
+1. Prototype
+   A prototype is an object from which another object can inherit properties and methods through delegation.
+   It enables shared behavior without copying inherited properties into every object.
+
+2. [[Prototype]]
+   [[Prototype]] is an internal link connecting an object to its prototype, or null.
+   It is not a normal property; use Object.getPrototypeOf() to inspect it.
+
+3. prototype Property
+   The prototype property is an ordinary property commonly found on constructible functions.
+   Its value is used as the [[Prototype]] of instances created with new Constructor().
+
+4. Prototype Chain
+   The prototype chain is the sequence of prototype links followed during property lookup.
+   Lookup stops when the property is found or null is reached.
+
+5. Inheritance Through Prototypes
+   JavaScript objects inherit behavior by delegating property lookups to their prototypes.
+   Unlike property copying, inherited properties remain on their original objects.
+
+6. Property Lookup
+   JavaScript first checks an object's own properties, then searches its prototype chain.
+   It returns the first matching property or undefined if no matching property exists.
+
+7. Prototype Delegation
+   Prototype delegation allows multiple objects to share properties and methods through a common prototype.
+   The shared method's this value depends on how the method is called.
+
+8. Object.prototype
+   Object.prototype is the root prototype for most ordinary objects and provides methods such as toString().
+   Its own prototype is null, and modifying it can affect many unrelated objects.
+
+9. Constructor Functions
+   Constructor functions initialize objects when called with new.
+   Properties assigned through this typically become own properties of the new instance.
+
+10. Constructor's Prototype
+    Constructor.prototype usually becomes the [[Prototype]] of instances created with new Constructor().
+    Methods placed on this object can be shared by all instances that inherit from it.
+
+11. The new Operator
+    new creates an instance, establishes its prototype, executes the constructor with this bound to the instance, and determines the return value.
+    An explicitly returned object or function replaces the new instance; a returned primitive is ignored for ordinary base constructors.
+
+12. Function Prototype Chain
+    A constructor function is itself an object and normally inherits from Function.prototype.
+    Its own prototype property is different from its own [[Prototype]].
+
+13. Arrow Functions and prototype
+    Arrow functions do not have their own prototype property and cannot be called with new.
+    They inherit this lexically rather than receiving this from the call site.
+
+14. **proto**
+    **proto** is a legacy accessor that can read or change an object's prototype.
+    Prefer Object.getPrototypeOf(), Object.setPrototypeOf(), or Object.create().
+
+15. Object.getPrototypeOf()
+    Object.getPrototypeOf(obj) returns the object's immediate prototype.
+    It does not return the entire chain and is preferred over **proto** for inspection.
+
+16. Object.create()
+    Object.create(proto) creates a new object with the specified prototype.
+    Object.create(null) creates an object without inherited properties from Object.prototype.
+
+17. Constructor Prototype Replacement
+    Reassigning Constructor.prototype does not change the prototype links of existing instances.
+    New instances use the replacement prototype, while old instances retain their original prototype.
+
+18. Prototype Mutation
+    Object.setPrototypeOf() changes an object's prototype link, while modifying an existing prototype changes that shared object's properties.
+    Prefer establishing prototype relationships during object creation rather than repeatedly changing them.
+
+19. Shared Prototype Methods
+    Methods placed on a prototype are shared by instances, reducing duplicate function allocations.
+    Instance-specific methods create separate function objects when defined separately for each instance.
+
+20. instanceof
+    instanceof generally checks whether Constructor.prototype appears in an object's prototype chain.
+    It does not prove that the constructor actually created the object, and Symbol.hasInstance can customize its behavior.
+
+21. Prototype Property Shadowing
+    Shadowing occurs when an object owns a property with the same name as an inherited property.
+    The own property takes precedence during lookup without modifying the prototype's property.
+
+22. Assignment to Inherited Properties
+    Assignment may create an own property, invoke an inherited setter, or fail when an inherited data property is non-writable.
+    Therefore, assignment does not always create or update an own property.
+
+23. Class Inheritance
+    class and extends provide class-oriented syntax over JavaScript's prototype-based inheritance.
+    Instances inherit methods through the instance prototype chain, while constructors have a separate inheritance chain.
+
+24. The super Keyword
+    super accesses methods through the superclass relationship established by class inheritance.
+    In methods, super method lookup uses the method's home object's prototype relationship and calls the method with the current this.
+
+25. Object.prototype Methods
+    Methods such as toString() and hasOwnProperty() are commonly inherited from Object.prototype.
+    Use Object.hasOwn(obj, key) when you need to check whether a property belongs directly to an object.
+
+26. Built-in Prototypes
+    Arrays normally inherit from Array.prototype, and functions normally inherit from Function.prototype.
+    Avoid modifying built-in prototypes because changes can affect unrelated code and libraries.
+
+27. Prototype Mutation and Cycles
+    JavaScript prevents ordinary prototype changes from creating a cyclic prototype chain.
+    A cycle would prevent normal property lookup from terminating correctly.
+
+28. Prototype Pollution
+    Prototype pollution occurs when unsafe processing of untrusted input modifies or exploits prototype-related behavior.
+    It can cause unexpected inherited properties and potentially compromise security-sensitive application logic.
+
+29. Preventing Prototype Pollution
+    Validate untrusted keys, use allowlists, avoid unsafe recursive merges, and check own properties where necessary.
+    Map and Object.create(null) can help with dictionary use cases but do not replace input validation or authorization.
+
+30. Object.create(null) for Security
+    Objects created with Object.create(null) do not inherit properties from Object.prototype.
+    They are useful for dictionaries but lack ordinary inherited methods such as toString().
+
+31. Prototype Chains and Performance
+    Property lookup can traverse multiple prototype links, although engines optimize common patterns.
+    Long or frequently changing prototype chains can complicate optimization; profile real workloads before making changes.
+
+32. Hidden Classes and Object Shapes
+    Modern engines such as V8 use internal structures such as hidden classes and inline caches to optimize property access.
+    Consistent object construction patterns can help optimization, but exact behavior depends on the engine.
+
+33. Stable Object Shapes
+    Creating objects with consistent properties and initialization order can help engines optimize property access.
+    Conditional property additions may produce different object shapes, but their performance impact should be measured.
+
+34. Prototype Changes and Optimization
+    Changing an object's prototype can invalidate or weaken prototype-dependent optimizations.
+    Prefer stable prototype relationships and benchmark performance-critical code in the target runtime.
+
+35. Browser vs Node.js
+    Core prototype semantics are defined by ECMAScript and are largely consistent across browsers and Node.js.
+    Host objects and engine versions differ, so DOM behavior and performance characteristics may vary.
+
+36. Property Lookup and Getters
+    Reading a property may execute a getter instead of returning a stored value directly.
+    Getters can perform calculations, mutate state, throw errors, or introduce side effects.
+
+37. Property Lookup and Non-writable Properties
+    An inherited non-writable data property prevents ordinary assignment from creating a shadowing own property.
+    In strict mode, failed assignments to non-writable properties throw TypeError.
+
+38. Property Lookup and Setters
+    An inherited setter can execute when assigning to a property on a child object.
+    The setter may modify the child without creating an own property with the assigned name.
+
+39. Object Identity
+    Objects are compared by reference identity using ===, not by comparing their contents.
+    Two separately created objects with identical properties are not equal by reference.
+
+40. Prototype Inspection
+    Object.getPrototypeOf() returns the immediate prototype, allowing the chain to be traversed until null.
+    Proxies and specialized objects can customize or complicate prototype-related operations.
+
+41. Multiple Inheritance
+    An object has at most one direct prototype, so JavaScript does not support multiple direct prototype parents.
+    Use composition, delegation, or mixin patterns when combining behavior from multiple sources.
+
+42. Proxy and Prototype Operations
+    Proxies can intercept prototype-related operations such as getting or setting a prototype.
+    Proxy traps must obey ECMAScript invariants, or the runtime may throw TypeError.
+
+43. ECMAScript vs Engine Internals
+    The ECMAScript specification defines observable prototype behavior and language semantics.
+    Hidden classes, inline caches, and specific optimization strategies are engine implementation details.
+
+44. Prototype Pollution Testing
+    Test generic merge and deep-set utilities with hostile keys such as **proto**, constructor, and prototype.
+    Verify that untrusted input cannot modify shared prototypes or bypass security checks.

@@ -1,0 +1,161 @@
+JAVASCRIPT FUNCTIONS — QUICK REVISION NOTES
+
+1. Function Declarations
+   A function declaration defines a named function using function name() {} and is initialized during declaration instantiation in its applicable scope.
+   It can generally be called before its textual declaration because its binding is initialized before ordinary statement execution.
+
+2. Function Expressions
+   A function expression creates a function as part of an expression and can be assigned to a variable or passed as an argument.
+   When assigned to const or let, the variable cannot be accessed before initialization because of the temporal dead zone.
+
+3. Anonymous Functions
+   An anonymous function is a function expression without an explicitly written name and is commonly used for callbacks and short operations.
+   JavaScript can infer function names in certain contexts, such as assigning a function expression to a variable.
+
+4. Named Functions
+   A named function has an explicit identifier that improves debugging and stack traces and can simplify recursion.
+   In a named function expression, the internal name is available inside the function but does not create an outer binding.
+
+5. Arrow Functions
+   Arrow functions provide concise syntax, inherit this lexically, and do not have their own arguments or new.target bindings.
+   They cannot be used as constructors and are unsuitable for methods that require this to refer to the calling object.
+
+6. Immediately Invoked Function Expressions (IIFEs)
+   An IIFE is a function expression invoked immediately, commonly written as (function() {})().
+   IIFEs historically provided private scope and namespace isolation; ES modules and block scope now handle many such use cases.
+
+7. Higher-Order Functions
+   A higher-order function accepts one or more functions as arguments, returns a function, or both.
+   Examples include map, filter, reduce, and custom utilities that configure or compose behavior.
+
+8. First-Class Functions
+   JavaScript functions are first-class values that can be assigned to variables, passed as arguments, returned, and stored in objects.
+   This capability enables callbacks, higher-order functions, middleware, event handlers, and functional programming.
+
+9. Callback Functions
+   A callback is a function passed to another function so it can be invoked immediately or at a later time.
+   Callbacks can be synchronous or asynchronous; understand their invocation timing, error handling, and this binding.
+
+10. Pure Functions
+    A pure function produces the same output for the same inputs and has no observable side effects.
+    Pure functions are easier to test, reason about, reuse, and memoize because their results depend only on their inputs.
+
+11. Impure Functions
+    An impure function depends on external state or produces observable side effects such as modifying shared objects or performing network requests.
+    Isolate side effects where practical to improve testability, predictability, and maintainability.
+
+12. Function Factories
+    A function factory returns another function, often configuring it with values captured from the outer scope.
+    Factories use closures to create specialized functions such as validators, multipliers, and configured event handlers.
+
+13. Recursive Functions
+    A recursive function calls itself directly or indirectly and requires a base case to terminate correctly.
+    Recursion often uses O(n) call-stack space for n nested calls, so deep recursion may cause a stack overflow.
+
+14. Nested Functions
+    A nested function is defined inside another function and can access outer variables through lexical scope.
+    Nested functions are useful for private helpers, encapsulation, and closures when returned or retained by another reference.
+
+15. Closures
+    A closure is a function together with the lexical environment it uses to resolve variables, allowing access to outer bindings after the outer function returns.
+    Closures support private state and factories but can retain reachable objects in memory while references remain alive.
+
+16. Function Composition
+    Function composition combines functions so the output of one becomes the input of another: compose(f, g)(x) = f(g(x)).
+    Composition encourages small reusable operations and is useful in data pipelines, validation, middleware, and functional programming.
+
+17. Currying
+    Currying transforms a multi-argument function into a sequence of functions that each accept one argument, such as add(a)(b).
+    It enables specialization and reusable functions by fixing arguments across successive function calls.
+
+18. Partial Application
+    Partial application fixes some arguments of a function and returns a new function that accepts the remaining arguments.
+    Unlike currying, partial application does not require converting every argument into a separate function call.
+
+19. Memoization
+    Memoization caches function results so repeated calls with equivalent keys can avoid recomputing expensive results.
+    It trades memory for speed and requires careful key selection, cache invalidation, and memory limits.
+
+20. Debouncing
+    Debouncing delays execution until a specified period passes without another call, resetting the timer on every new call.
+    It is useful for search inputs, autosave, and validation when only the final call after a burst matters.
+
+21. Throttling
+    Throttling limits how frequently a function executes during repeated calls, such as frequent scroll or pointer events.
+    Choose leading and trailing execution behavior carefully because a basic throttle may discard intermediate or final calls.
+
+22. Default Parameters
+    Default parameters provide fallback values when an argument is omitted or explicitly undefined, and defaults are evaluated at call time.
+    Values such as null, false, 0, and an empty string do not trigger default parameters.
+
+23. Rest Parameters
+    Rest parameters use ...args to collect remaining function arguments into a real array and must appear last in the parameter list.
+    They provide clear variadic APIs and are generally preferable to arguments in modern JavaScript.
+
+24. Spread Syntax
+    Spread syntax expands iterable values in arrays and function calls, or own enumerable properties in object literals.
+    Array and object spread create shallow copies, so nested objects remain shared unless separately cloned.
+
+25. Destructuring Parameters
+    Destructuring parameters extract object properties or array elements directly in a function's parameter list.
+    Use a default such as ({ name } = {}) when omitted arguments should be supported; passing null still throws.
+
+26. arguments
+    The arguments object is an array-like collection of supplied arguments available to ordinary functions, but not created by arrow functions.
+    In non-strict ordinary functions, arguments indices may be mapped to parameter bindings; strict-mode arguments are unmapped.
+
+27. arguments vs Rest Parameters
+    arguments is array-like, while rest parameters produce a real array with direct access to array methods.
+    Prefer rest parameters because they explicitly communicate variable-argument intent and work naturally with arrow functions.
+
+28. Parameter Evaluation
+    Function-call arguments evaluate from left to right, and default parameter expressions execute when the function is called.
+    Later default parameters can reference earlier parameters, but accessing a later parameter before initialization can throw a ReferenceError.
+
+29. this Binding
+    A regular function's this generally depends on how the function is called, while an arrow function captures this lexically.
+    Use call, apply, or bind when a regular function needs an explicit receiver; these cannot rebind an arrow function's this.
+
+30. Function Execution Context
+    A function call establishes an execution context containing the state needed to evaluate its code, including parameter and local bindings.
+    The call stack tracks active function calls, and returning from a call resumes execution in the caller.
+
+31. Function Hoisting
+    Function declarations are initialized during declaration instantiation within their applicable scope, allowing calls before their textual definitions.
+    Function expressions assigned to let or const depend on the variable's initialization and cannot be accessed during the temporal dead zone.
+
+32. Pass-by-Value and Objects
+    JavaScript passes argument values by value; for objects, the copied value refers to the same underlying object.
+    Reassigning a parameter does not reassign the caller's variable, but mutating the referenced object can affect the caller.
+
+33. Closures and Memory
+    Closures can keep outer bindings and reachable objects alive as long as references require them, but engines may optimize retained storage.
+    Remove obsolete listeners and timers and avoid unbounded caches to reduce unnecessary memory retention.
+
+34. Recursion vs Iteration
+    Recursion expresses tree traversal and divide-and-conquer algorithms naturally but can consume substantial call-stack space.
+    Iteration often avoids recursive stack growth and is safer for deeply nested or very large inputs.
+
+35. Function Wrappers
+    A function wrapper adds behavior around another function, as seen in logging, memoization, throttling, and authorization helpers.
+    Preserve this, arguments, return values, exceptions, and timing when wrapping a function to avoid changing its contract.
+
+36. Function Performance
+    Function calls and closures are normal JavaScript operations, and modern engines optimize many common patterns automatically.
+    Measure real bottlenecks before optimizing, and evaluate computation cost, allocation, caching overhead, and retained memory.
+
+37. Function Security
+    Closures can encapsulate state but do not provide a complete security boundary or replace authorization and input validation.
+    Avoid unsafe dynamic code execution and validate untrusted inputs at the appropriate application boundaries.
+
+38. Callback Error Handling
+    A synchronous callback's exception can propagate through the current call stack, while an asynchronous callback's error may occur later.
+    Handle asynchronous errors at the appropriate callback, promise, or event boundary rather than relying on an earlier try/catch.
+
+39. Function Naming and Debugging
+    Meaningful function names improve readability, stack traces, profiling, and debugging of complex execution paths.
+    Use named functions for substantial logic and recursive operations instead of relying entirely on anonymous callbacks.
+
+40. Function Design Mental Model
+    Function definitions determine how functions are created, lexical scope determines variable lookup, and invocation determines runtime behavior.
+    First-class functions, closures, and higher-order functions combine to enable reusable abstractions such as composition, memoization, and debouncing.

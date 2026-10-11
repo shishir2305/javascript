@@ -1,0 +1,341 @@
+JAVASCRIPT ITERATORS, GENERATORS & LOOPS — QUICK REVISION NOTES
+
+==================================================
+SECTION 1: ITERATORS & ITERABLES
+==================================================
+
+1. Iterable Protocol
+An iterable is an object that implements `[Symbol.iterator]()` and returns an iterator. Arrays, strings, Maps, and Sets are built-in iterables that can be consumed by `for...of`.
+
+2. Iterator Protocol
+An iterator is an object with a `next()` method that returns an object containing `value` and `done`. The `done` property indicates whether iteration has completed.
+
+3. Symbol.iterator
+`Symbol.iterator` is the well-known symbol that defines an object's default synchronous iteration behavior. It is used by `for...of`, spread syntax, and APIs that consume synchronous iterables.
+
+4. next()
+Calling `iterator.next()` advances iteration and returns `{ value, done }`. Once `done` becomes true, ordinary iterators should continue reporting completion on subsequent calls.
+
+5. Iterators
+An iterator maintains the state needed to produce the next value without requiring all values to exist in memory. Iterators can be consumed manually using `next()` or automatically using constructs such as `for...of`.
+
+6. Custom Iterables
+A custom iterable implements `[Symbol.iterator]()` and returns an object with a `next()` method. This lets custom objects work with `for...of`, spread syntax, and other iterable-consuming APIs.
+
+7. for...of
+`for...of` retrieves values from an iterable using its iterator protocol. It supports `break`, `continue`, and `return` from the surrounding function, and may close an iterator when iteration exits early.
+
+8. Iterable vs Iterator
+An iterable provides `[Symbol.iterator]()`; an iterator provides `next()`. An object can be both, but the two protocols represent different responsibilities.
+
+9. Iterator Result Object
+Every `next()` call returns an object with a `done` flag and an optional `value`. When `done` is true, the value is the iterator's completion value and is generally ignored by `for...of`.
+
+10. Iterator Closing
+When a `for...of` loop exits early, such as through `break`, JavaScript can call the iterator's `return()` method for cleanup. Custom iterators can implement `return()` to release resources.
+
+11. for...in vs for...of
+`for...in` iterates over enumerable string property keys, including inherited enumerable properties; `for...of` iterates over values produced by an iterable. Use `Object.keys()` or `Object.entries()` for predictable own-property iteration.
+
+==================================================
+SECTION 2: GENERATORS
+==================================================
+
+12. Generators
+A generator is a special function that produces an iterator and can pause and resume its execution. Generators are useful for lazy sequences, custom iterables, and stateful iteration.
+
+13. function*
+Declaring a function with `function*` creates a generator function. Calling it returns a generator object without executing the function body immediately.
+
+14. yield
+`yield` produces a value and suspends the generator until its next interaction. The generator retains its local variables and execution position while paused.
+
+15. Generator Execution
+A generator begins execution when its first `next()` is called, pauses at each `yield`, and resumes on later calls. Each `next()` returns an iterator result object.
+
+16. next(value) in Generators
+The first `next(value)` argument is ignored because execution has not yet reached a suspended `yield`. On subsequent calls, the argument becomes the result of the suspended `yield` expression.
+
+17. Generator State
+A generator moves through suspended-start, suspended-yield, and completed states. Once completed, further `next()` calls return `{ value: undefined, done: true }` unless another interaction has special behavior.
+
+18. Generator Return Value
+A generator's `return(value)` completes it and produces an iterator result with `done: true`. A generator's explicit `return` statement supplies its final completion value, which `for...of` does not yield.
+
+19. Generator throw()
+Calling `generator.throw(error)` injects an exception at the generator's suspended position. The generator can catch it with `try...catch`; otherwise, the exception propagates to the caller.
+
+20. Generator return()
+Calling `generator.return(value)` requests generator completion and allows pending `finally` blocks to execute. A `finally` block that yields can temporarily suspend the generator before completion finishes.
+
+21. yield*
+`yield* iterable` delegates iteration to another iterable or generator, yielding its values one by one. Its expression evaluates to the delegated iterator's completion value when delegation finishes normally.
+
+22. Generator Delegation
+Delegation with `yield*` forwards iterator interactions, including applicable `next()`, `throw()`, and `return()` operations. It is useful for composing generators and separating sequence logic into smaller functions.
+
+23. Lazy Evaluation
+Generators compute values only as iteration requests them, rather than constructing an entire sequence upfront. This can reduce memory usage for large or potentially infinite sequences.
+
+24. Infinite Generators
+A generator can produce values indefinitely, such as an infinite sequence of numbers. The consumer must stop iteration explicitly or the loop may never finish.
+
+25. Generator vs Regular Function
+A regular function executes when called and returns its result; a generator function returns a resumable iterator. Generators preserve execution state between `yield` points.
+
+==================================================
+SECTION 3: ASYNC ITERATORS
+==================================================
+
+26. Async Iterators
+An async iterator implements `next()` that returns a promise resolving to an iterator result. It is designed for sequentially consuming asynchronous sources such as paginated APIs or streams.
+
+27. Symbol.asyncIterator
+`Symbol.asyncIterator` defines an object's default asynchronous iteration behavior. Objects implementing it can be consumed with `for await...of`.
+
+28. Async Generators
+An async generator is declared using `async function*` and produces an asynchronous iterator. Its `yield` operations can produce values asynchronously, and its `next()` calls return promises.
+
+29. for await...of
+`for await...of` awaits each iterator result before executing the loop body. It supports asynchronous iterables and can also consume synchronous iterables, awaiting yielded promise-like values in the synchronous-iterator fallback.
+
+30. Async Iteration vs Promise.all()
+`for await...of` processes iterations sequentially, which is useful when each step depends on the previous one. `Promise.all()` can run independent asynchronous operations concurrently when their results can be collected together.
+
+31. Async Iterator Cleanup
+When `for await...of` exits early, it can await the iterator's `return()` method to allow cleanup. This is important when consuming streams or other resources that need to be closed.
+
+32. Sequential Async Loops
+Using `await` inside a normal `for...of` loop waits for each operation before starting the next. This preserves order but can be slower than concurrent execution when tasks are independent.
+
+==================================================
+SECTION 4: BASIC LOOP TYPES
+==================================================
+
+33. for Loop
+A `for` loop combines initialization, a condition, and an update expression in one construct. Its execution order is initialization → condition → body → update → condition.
+
+34. while Loop
+A `while` loop checks its condition before each iteration, so the body may execute zero times. Ensure the loop changes state toward a terminating condition to prevent infinite execution.
+
+35. do...while Loop
+A `do...while` loop executes its body before checking the condition, guaranteeing at least one iteration. Remember the semicolon after the while condition.
+
+36. Nested Loops
+A nested loop places one loop inside another and is useful for matrices, grids, and pair comparisons. If both loops perform n iterations, the total work is typically O(n²).
+
+37. Infinite Loops
+A loop becomes infinite when its termination condition never becomes false or when no progress is made toward termination. Intentional infinite loops should include a reliable exit condition or control mechanism.
+
+38. Loop Initialization
+Initialization establishes the loop's starting state and normally runs once in a traditional `for` loop. Variables declared with `let` in a `for` initializer receive per-iteration bindings for closures.
+
+39. Multiple for Expressions
+A `for` loop can include multiple initialization or update expressions separated by commas. The condition is still a single expression, and the update expressions execute in order after the body.
+
+40. Omitted for Clauses
+The initialization, condition, or update clauses of a `for` loop can be omitted. Omitting the condition makes it behave as true, so an explicit exit mechanism may be necessary.
+
+==================================================
+SECTION 5: LOOP CONTROL
+==================================================
+
+41. break
+`break` immediately exits the nearest enclosing loop or `switch` statement. A labeled `break` can exit a specific outer loop.
+
+42. continue
+`continue` skips the rest of the current iteration and proceeds to the next one. In a traditional `for` loop, the update expression still executes; in a `while` loop, ensure required updates are not skipped.
+
+43. Labeled Loops
+A label names a statement or loop so that `break label` can exit it or `continue label` can move to its next iteration. Labels help control nested loops but should be used sparingly for readability.
+
+44. return Inside a Loop
+`return` exits the entire enclosing function, not just the loop. Use `break` to exit a loop while allowing the function to continue executing.
+
+45. Exceptions Inside Loops
+An uncaught exception interrupts normal loop execution and propagates to the caller. Use `try...catch` when an individual iteration should fail without necessarily stopping the entire process.
+
+==================================================
+SECTION 6: ARRAY ITERATION METHODS
+==================================================
+
+46. forEach()
+`forEach()` invokes a callback for each present array element and does not return a transformed array. It cannot be terminated with `break` or `continue`, and it does not await promises returned by async callbacks.
+
+47. map()
+`map()` creates a new array from callback return values, making it suitable for transforming data. It generally preserves the source array's length and sparse holes, and does not mutate the original array by itself.
+
+48. filter()
+`filter()` creates a new array containing elements whose callback result is truthy. It is useful for selecting matching elements without directly modifying the original array.
+
+49. reduce()
+`reduce()` combines array elements into a single accumulated result, such as a sum, object, or grouped structure. Provide an initial accumulator to handle empty arrays safely and avoid unexpected accumulator types.
+
+50. some()
+`some()` returns true when at least one tested element passes the condition and stops at the first match. It returns false for an empty array.
+
+51. every()
+`every()` returns true only when every tested element passes the condition and stops at the first failure. It returns true for an empty array because no element violates the condition.
+
+52. find()
+`find()` returns the first element that satisfies the callback condition, or `undefined` if no element matches. Use it when you need the matching value rather than its position.
+
+53. findIndex()
+`findIndex()` returns the index of the first matching element, or -1 if no element matches. It is useful when the matching element's position is required.
+
+54. flatMap()
+`flatMap()` maps each present array element and flattens the resulting arrays by one level. It is useful when one input element produces zero, one, or several output elements.
+
+55. Array Method Short-Circuiting
+`some()`, `every()`, `find()`, and `findIndex()` stop when their result is determined. `map()`, `filter()`, and `forEach()` generally process all present elements.
+
+56. Async Callbacks in Array Methods
+Array methods such as `forEach()`, `map()`, and `filter()` do not automatically await async callbacks. Use `Promise.all(array.map(asyncFn))` for concurrent results or `for...of` with `await` for sequential processing.
+
+57. reduce() Without an Initial Value
+Without an initial accumulator, `reduce()` uses the first present element as the accumulator and starts processing afterward. An empty array with no initial value throws a `TypeError`.
+
+==================================================
+SECTION 7: ARRAYS, OBJECTS & EDGE CASES
+==================================================
+
+58. Index-Based Array Loop
+A traditional `for` loop gives precise control over array indexes, direction, skipping, and neighboring elements. It is useful when index access or custom iteration steps are required.
+
+59. for...of with Arrays
+`for...of` iterates over array values rather than property keys. It observes array positions in sequence and yields `undefined` for empty slots in sparse arrays.
+
+60. Sparse Arrays
+Sparse arrays contain missing indexes, which `forEach()`, `map()`, and `filter()` generally skip. `for...of` visits the positions and yields `undefined` for holes.
+
+61. Array Mutation During Iteration
+Mutating an array while iterating can change which elements are visited or how many iterations occur. For predictable behavior, avoid structural mutations during traversal or iterate over a deliberate copy.
+
+62. Appending During for...of
+Appending elements to an array during `for...of` may cause newly appended elements to be visited because the array iterator checks the current length as it advances. Avoid unbounded appending unless intentional.
+
+63. let vs var in Loops
+A `let` declaration in a traditional `for` loop creates a fresh binding for each iteration, which helps callbacks capture the expected value. A `var` declaration shares one function-scoped binding across iterations.
+
+64. Closures in Loops
+Closures capture variable bindings, not simply snapshots of values. `let` in a traditional `for` loop creates per-iteration bindings, whereas `var` often causes callbacks to observe the final shared value.
+
+65. Object.keys()
+`Object.keys(obj)` returns an array of an object's own enumerable string-keyed property names. It excludes inherited properties, non-enumerable properties, and symbol keys.
+
+66. Object.values()
+`Object.values(obj)` returns an array of values for the object's own enumerable string-keyed properties. Use it when property values matter but their keys do not.
+
+67. Object.entries()
+`Object.entries(obj)` returns `[key, value]` pairs for own enumerable string-keyed properties. Combine it with `for...of` to iterate through an object's keys and values together.
+
+68. Reflect.ownKeys()
+`Reflect.ownKeys(obj)` returns all own property keys, including non-enumerable properties and symbols. Unlike `Object.keys()`, it does not restrict results to enumerable string keys.
+
+69. Object.hasOwn()
+`Object.hasOwn(obj, key)` checks whether a property belongs directly to the object rather than its prototype chain. It is safer than calling `obj.hasOwnProperty()` on objects that may lack or override that method.
+
+70. Property Enumeration Order
+JavaScript defines ordering rules for own property keys, including integer-index-like string keys before other string keys and symbols afterward in relevant reflection APIs. Do not assume arbitrary object enumeration is equivalent to sorting keys alphabetically.
+
+71. String Iteration
+`for...of` iterates strings by Unicode code points rather than UTF-16 code units. Index-based access and methods such as `split("")` can split surrogate pairs representing some characters.
+
+72. Map Iteration
+A `Map` is iterable and yields `[key, value]` pairs in insertion order. Use `for...of` or `map.forEach()` depending on whether loop control is required.
+
+73. Set Iteration
+A `Set` is iterable and yields unique values in insertion order. Use it to process distinct values without manually tracking duplicates.
+
+74. for...in Safety
+`for...in` can include inherited enumerable properties, so it is usually not the best choice for directly iterating array values. For own object properties, use `Object.keys()`, `Object.values()`, or `Object.entries()`.
+
+==================================================
+SECTION 8: PERFORMANCE & PRACTICAL CHOICES
+==================================================
+
+75. Choosing the Right Loop
+Use `for` for precise index control, `for...of` for iterable values, `for...in` for enumerable property keys, and `for await...of` for asynchronous iteration. Choose array methods when their transformation or predicate semantics improve clarity.
+
+76. Loop Time Complexity
+A loop that processes n elements once is typically O(n), while two full nested loops are typically O(n²). Analyze actual iteration counts and operations rather than judging complexity from syntax alone.
+
+77. Loop Memory Complexity
+Loops that process values incrementally often use O(1) extra memory, excluding stored results and iterator-specific state. Methods such as `map()` and `filter()` allocate result arrays and typically require O(n) additional space.
+
+78. for...of vs forEach()
+`for...of` supports `break`, `continue`, and sequential `await` inside an async function. `forEach()` is concise for synchronous side effects but cannot directly stop iteration or coordinate async callbacks.
+
+79. for Loop vs for...of
+A traditional `for` loop provides index control and can skip or traverse indexes in custom ways. `for...of` is generally clearer when only values are needed and the object is iterable.
+
+80. Performance Optimization
+No loop syntax is universally fastest across all JavaScript engines and workloads. Prefer readable code first, measure real bottlenecks, and optimize using representative benchmarks.
+
+81. Lazy vs Eager Iteration
+Generators and iterators can produce values on demand, avoiding the need to materialize an entire sequence. Array transformations often create intermediate arrays, trading memory allocation for convenient declarative code.
+
+82. Avoiding Unnecessary Allocations
+Chaining array methods may create intermediate arrays, while a carefully designed loop can combine operations into one pass. Optimize this only when profiling shows that allocations or repeated passes matter.
+
+83. Loop Safety
+Validate loop bounds, termination conditions, and external data to prevent accidental infinite loops or excessive work. For user-controlled iteration counts, consider limits and cancellation mechanisms.
+
+84. Resource Cleanup
+When iterating over resource-backed streams or custom iterators, ensure early exits trigger appropriate cleanup. Iterator `return()` methods and `try...finally` blocks can help release resources reliably.
+
+85. Sequential vs Concurrent Work
+Use sequential loops when order or dependencies matter, and concurrent execution when independent tasks can safely run together. Limit concurrency when launching every task simultaneously could exhaust memory, connections, or API quotas.
+
+==================================================
+SECTION 9: QUICK OUTPUT-BASED REMINDERS
+==================================================
+
+86. continue in a for Loop
+`continue` in a traditional `for` loop skips the remaining body but still executes the update expression. This differs from a `while` loop, where the programmer must ensure progress occurs before the next condition check.
+
+87. continue in a while Loop
+If `continue` skips the statement that updates the condition variable, the loop may become infinite. Update the state before continuing or restructure the loop.
+
+88. Async forEach Output
+An async callback passed to `forEach()` starts asynchronous work, but `forEach()` does not wait for it. A statement after `forEach()` may run before the callback's awaited operation finishes.
+
+89. for...of with Changing Arrays
+An array iterator can observe changes to the array while iteration is in progress, including appended elements. If a fixed snapshot is required, iterate over a copy.
+
+90. some() Short-Circuiting
+`some()` stops evaluating elements immediately after the first truthy predicate result. Side effects inside its callback therefore may not run for every element.
+
+91. Iterator Exhaustion
+Once a standard iterator reports `done: true`, a `for...of` loop treats the iteration as complete. Restart iteration by requesting a new iterator from the iterable when its design supports it.
+
+92. Generator First next()
+The first `next()` starts generator execution and runs until the first `yield` or completion. Its argument does not become the value of a `yield` expression because no suspended yield exists yet.
+
+93. Generator Completion
+A generator that finishes without an explicit return value produces `undefined` as its completion value. `for...of` ignores the generator's final return value and yields only values produced through `yield`.
+
+94. for await...of Ordering
+`for await...of` awaits each iteration result before continuing to the next body execution. It is sequential, not automatically parallel, even when each body iteration contains asynchronous work.
+
+95. Async Generator Errors
+An error thrown inside an async generator rejects the promise returned by the relevant `next()` call unless handled inside the generator. Consumers should handle failures using `try...catch` when appropriate.
+
+==================================================
+FINAL MENTAL MODEL
+==================================================
+
+96. Iteration Protocols
+An iterable explains how to obtain an iterator; an iterator explains how to retrieve the next result. Synchronous iteration uses `Symbol.iterator`, while asynchronous iteration uses `Symbol.asyncIterator`.
+
+97. Generators
+Generators are functions that pause at `yield` and resume on later iterator operations. They provide a convenient way to implement stateful, lazy sequences without manually writing iterator state machines.
+
+98. Loop Selection
+Choose a loop based on the data source, whether you need indexes, whether asynchronous values are involved, and whether early termination is required. Prefer clear semantics over memorizing which syntax is supposedly fastest.
+
+99. Array Methods
+Use `map()` for transformation, `filter()` for selection, `reduce()` for accumulation, `some()` and `every()` for conditions, and `find()` for the first matching value. Remember that async callbacks are not automatically awaited by these methods.
+
+100. Interview Principle
+Explain both what a loop or iterator does and how its protocol, state, termination, and edge cases work. For output questions, trace initialization, condition checks, body execution, updates, and callback scheduling in exact order.

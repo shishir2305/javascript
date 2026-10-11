@@ -1,0 +1,70 @@
+# JavaScript Error Handling — Quick Revision Notes
+
+Errors: Failures that prevent an operation from completing as intended; they may be thrown automatically or explicitly.
+Handle failures through validation, try/catch, promise rejection handling, or deliberate fallback strategies.
+
+Error: The built-in error constructor creates structured error objects with message, name, and usually a stack trace.
+Prefer `new Error("message")` over throwing strings because error objects provide better debugging and classification.
+
+TypeError: Occurs when an operation is incompatible with a value, such as accessing a property on null or calling a non-function.
+Use validation and appropriate optional chaining; do not hide TypeErrors that reveal genuine programming bugs.
+
+ReferenceError: Occurs when a variable binding cannot be resolved or a lexical variable is accessed before initialization.
+Remember that let and const have a temporal dead zone between entering their scope and initializing their declarations.
+
+SyntaxError: Indicates invalid JavaScript syntax or malformed input passed to a parser such as JSON.parse().
+Syntax errors in the current script may prevent execution before its try/catch can run.
+
+RangeError: Occurs when a value falls outside the range allowed by an operation, such as a negative array length.
+Validate lengths, sizes, and numeric boundaries before performing operations that require valid ranges.
+
+URIError: Occurs when URI encoding or decoding functions receive malformed input, such as invalid percent-encoding.
+Validate or safely handle external URL data when decoding URI components.
+
+AggregateError: Represents multiple errors inside one error object, accessible through its errors property.
+Promise.any() rejects with AggregateError when every supplied promise rejects.
+
+Custom Errors: Extend Error to create application-specific error types, such as ValidationError, NotFoundError, or AuthenticationError.
+Use instanceof to classify errors and attach useful metadata such as statusCode or preserve the original cause.
+
+throw: Raises an exception and stops normal execution along the current path until a handler catches it.
+Prefer throwing Error objects or subclasses instead of strings, numbers, or arbitrary values.
+
+try: Encloses code whose synchronous exceptions can be handled by an associated catch block.
+Keep try blocks focused on failure-prone operations so unrelated bugs are not accidentally caught.
+
+catch: Receives an exception thrown in the associated try block and enables logging, recovery, translation, or rethrowing.
+A catch parameter can contain any JavaScript value, so do not assume every thrown value is an Error object.
+
+finally: Executes after try/catch completion and is useful for cleanup, releasing resources, and resetting state.
+Avoid return or throw inside finally because it can override a pending return value or suppress an original exception.
+
+Error Propagation: An unhandled exception moves up the call stack until a suitable catch block handles it.
+Catch errors where a meaningful recovery decision can be made; otherwise, preserve context and propagate them.
+
+Synchronous vs Asynchronous Errors: Synchronous exceptions propagate through the call stack, while promise failures propagate as rejections.
+Use await inside try/catch or attach .catch() to handle promise rejections; a normal try/catch does not catch an unawaited rejection.
+
+Stack Traces: A stack trace describes the call path associated with an error and helps identify where execution failed.
+Preserve useful diagnostic context, avoid exposing internal traces to clients, and never log secrets or sensitive data.
+
+Error Boundaries: React error boundaries isolate supported descendant rendering errors and display fallback UI.
+They do not generally catch event-handler errors, ordinary asynchronous callback failures, or errors thrown by the boundary itself.
+
+Error-Handling Strategies: Validate early, classify errors, retry selectively, log safely, preserve causes, and centralize response handling.
+Retry only suitable transient failures, use bounded backoff, and avoid silently suppressing errors or exposing internal details.
+
+Fail-Fast: Stop an operation immediately when continuing could violate correctness, security, or business invariants.
+Use fail-fast behavior for invalid authorization, critical validation failures, and operations that cannot safely continue.
+
+Graceful Degradation: Preserve essential functionality when a noncritical dependency or feature fails by using a fallback.
+Use cached data, fallback UI, or reduced functionality while monitoring the underlying failure.
+
+Error Causes: The cause property preserves the underlying error when a higher-level operation wraps it in a new Error.
+Use new Error("Context message", { cause: originalError }) to add context without losing the root failure.
+
+Centralized Error Handling: A shared boundary converts known application errors into consistent responses and logs unexpected failures.
+In backend frameworks, use error middleware or equivalent handlers to separate business logic from transport-level responses.
+
+Output-Based Interview Insight: A return or throw inside finally can override a pending return or exception from try/catch.
+A rejected promise is not caught by a synchronous try/catch unless it is awaited or its rejection is explicitly handled.

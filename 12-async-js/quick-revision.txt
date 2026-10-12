@@ -1,0 +1,194 @@
+ASYNCHRONOUS JAVASCRIPT — QUICK REVISION NOTES
+==============================================
+
+SYNCHRONOUS EXECUTION
+Synchronous execution runs statements in order, with each operation completing before the next statement in that flow proceeds.
+Calls use the execution stack; long-running synchronous work blocks subsequent JavaScript on the same thread.
+
+ASYNCHRONOUS EXECUTION
+Asynchronous execution lets other work proceed while an operation is pending, with completion handled later by callbacks, Promises, or async/await.
+It does not automatically mean JavaScript runs on another thread; host APIs may handle I/O or timers outside the current JS execution flow.
+
+BLOCKING VS NON-BLOCKING
+Blocking work prevents the current JavaScript thread from progressing; non-blocking I/O lets the thread continue while the operation is pending.
+Use workers/worker threads for suitable CPU-heavy work; async I/O alone does not make CPU-bound JavaScript parallel.
+
+CALLBACKS
+A callback is a function passed to another function to be invoked later or at a chosen point; callbacks can be synchronous or asynchronous.
+Node.js commonly uses error-first callbacks, `(error, result)`; callers must handle errors and avoid duplicate or forgotten completion paths.
+
+CALLBACK HELL
+Callback hell is deeply nested callback-based control flow that makes dependencies, errors, testing, and maintenance harder to manage.
+Promises and async/await improve composition and readability, but do not automatically solve concurrency, cancellation, or architecture problems.
+
+PROMISES
+A Promise represents the eventual outcome of an operation and lets code register fulfillment/rejection handlers and compose work.
+A Promise is not the operation itself and does not guarantee background execution; creating a Promise runs its executor synchronously.
+
+PROMISE STATES
+A Promise is pending, fulfilled, or rejected; fulfilled and rejected Promises are settled, and their outcomes cannot subsequently change.
+“Resolved” is not a fourth state: a Promise resolved to another pending Promise adopts its eventual outcome and may remain pending meanwhile.
+
+PROMISE LIFECYCLE
+The executor runs synchronously; resolve/reject determines or adopts an outcome, and registered reactions run later through Promise scheduling.
+Only the first effective resolution/rejection wins; calling resolve does not immediately execute `.then()` handlers.
+
+PROMISE RESOLUTION PROCEDURE
+Resolving with a plain value fulfills with that value; resolving with a Promise/thenable adopts its eventual state.
+Thenable access or invocation can throw or execute arbitrary code, so untrusted thenables must be treated cautiously.
+
+PROMISE CHAINING
+`.then()` returns a new Promise whose outcome depends on the handler's return value or thrown error, allowing operations to be composed.
+Return dependent Promises from handlers; forgetting `return` disconnects the operation from the chain and can cause premature continuation or unhandled failure.
+
+PROMISE FLATTENING
+When a `.then()` handler returns a Promise or thenable, the next Promise adopts its eventual outcome instead of exposing a nested Promise value.
+Flattening lets later handlers receive the final value and lets rejections propagate through the same chain.
+
+THENABLES
+A thenable is an object or function with a callable `then` property; it need not be a native Promise.
+Promise resolution assimilates thenables, protects against repeated resolve/reject calls, and turns failures during assimilation into rejection.
+
+.THEN()
+`.then(onFulfilled, onRejected)` registers optional handlers and returns a new Promise; handlers run as Promise reactions, not inline.
+A returned value fulfills the next Promise, a returned Promise/thenable is adopted, and a thrown error rejects the next Promise.
+
+.CATCH()
+`.catch(onRejected)` is shorthand for `.then(undefined, onRejected)` and handles a rejection in the preceding chain.
+Returning normally recovers with a fulfillment value; throwing or returning a rejected Promise propagates a new rejection.
+
+.FINALLY()
+`.finally(callback)` runs after fulfillment or rejection and is intended for cleanup that should happen either way.
+Its normal return value is ignored and the original outcome is preserved, but a thrown error or rejected Promise from the finalizer overrides that outcome.
+
+PROMISE ERROR PROPAGATION
+A throw in a Promise handler rejects the Promise returned by that handler; the rejection travels down the chain until handled.
+Logging in `.catch()` does not rethrow; explicitly throw again when callers must still observe failure, and avoid silently masking errors.
+
+PROMISE.ALL()
+`Promise.all(iterable)` fulfills when every input fulfills, returning values in input order; it rejects when an input rejects.
+It does not cancel remaining operations; empty input fulfills with `[]`, and non-Promise values are accepted as inputs.
+
+PROMISE.ALLSETTLED()
+`Promise.allSettled(iterable)` waits until every input settles and returns ordered records with `status` plus `value` or `reason`.
+Use it for bulk work where each success/failure matters; input rejections do not normally reject the combined Promise.
+
+PROMISE.RACE()
+`Promise.race(iterable)` settles according to the first input to settle, whether fulfilled or rejected; an empty iterable stays pending.
+It can implement a timeout policy, but racing alone does not stop the losing request or clear timeout resources.
+
+PROMISE.ANY()
+`Promise.any(iterable)` fulfills with the first successful result and ignores earlier rejections while other inputs may still succeed.
+It rejects with `AggregateError` only when all inputs reject; its errors are ordered by input position, not completion time.
+
+PROMISE.RESOLVE()
+`Promise.resolve(value)` creates/returns a Promise fulfilled with a value or adopts a Promise/thenable's eventual outcome.
+It is useful for normalizing sync and async return values, but does not move CPU work to a background thread.
+
+PROMISE.REJECT()
+`Promise.reject(reason)` creates a rejected Promise; prefer `Error` objects for useful messages and stack traces.
+The rejection must be handled or deliberately propagated; an ignored rejection may become an unhandled rejection.
+
+MICROTASKS AND TASKS
+Promise reactions and `queueMicrotask()` callbacks use microtask scheduling; timers run through host-specific task/event-loop mechanisms.
+Current synchronous code finishes before Promise reactions run, but exact scheduling details differ between browsers and Node.js.
+
+EVENT LOOP
+The event loop coordinates eligible callbacks, I/O, timers, and other host work when JavaScript can run them.
+Browsers also coordinate rendering and input; Node.js uses libuv phases and host-specific scheduling, so do not assume every ordering is universal.
+
+BROWSER VS NODE.JS
+Browsers provide APIs such as fetch, timers, DOM events, and Web Workers; Node.js provides filesystem/network APIs, timers, and worker threads.
+Both support Promises and async/await, but host APIs, event-loop details, I/O behavior, and unhandled-rejection reporting can differ.
+
+MICROTASK STARVATION
+An endless chain of microtasks can prevent the runtime from reaching other scheduling opportunities, delaying rendering or I/O callbacks.
+Bound repeated work and yield appropriately; use workers for CPU-heavy work rather than endlessly scheduling more microtasks.
+
+PROMISE CANCELLATION
+Native Promises have no general built-in `cancel()` method; rejecting a wrapper Promise does not necessarily stop the underlying operation.
+Cancellation must be supported by the API or designed separately, and stopping client work does not guarantee rollback of server-side effects.
+
+ABORTCONTROLLER
+`AbortController` exposes an `AbortSignal` that APIs such as `fetch()` can observe to abort supported work or response consumption.
+Pass signals from the caller when possible, handle abort errors, and clean up timers/listeners; cancellation can race with normal completion.
+
+PROMISE CONCURRENCY
+Starting many operations at once can increase latency pressure, memory use, connection usage, rate-limit errors, and service load.
+Use bounded concurrency, queues, backpressure, and rate limits; `Promise.all()` coordinates already-started work rather than limiting it.
+
+SEQUENTIAL VS PARALLEL ASYNC WORK
+Sequential `await` waits for each operation before starting the next; use it for dependencies, ordering, or deliberate rate control.
+Start independent operations together and combine them with `Promise.all()` when appropriate; parallel work changes failure and resource behavior.
+
+PROMISE MEMORY BEHAVIOR
+Pending Promises, reaction handlers, timers, and closures can keep referenced objects reachable; settled Promises can retain values while referenced.
+Avoid unbounded queues and long-lived listeners, release unnecessary references, process large data incrementally, and use heap profiling to investigate leaks.
+
+UNHANDLED REJECTIONS
+A rejected Promise with no timely rejection handler may trigger browser reporting/events or Node.js unhandled-rejection behavior, which depends on runtime/configuration.
+Do not ignore async return values accidentally; await them, return them, or attach explicit rejection handling for intentional fire-and-forget work.
+
+ASYNC FUNCTIONS
+An `async` function always returns a Promise; returning a value fulfills it, while an uncaught throw rejects it.
+Its body starts executing immediately and runs synchronously until it suspends at an `await` or completes; async does not mean background-thread execution.
+
+AWAIT
+`await` unwraps a Promise/thenable outcome and suspends only the surrounding async function until it can resume.
+Awaiting a plain value is valid too, and the continuation resumes asynchronously; the rest of the JavaScript thread can continue.
+
+AWAIT SUSPENSION
+At `await`, the async function's remaining work is paused and scheduled to resume after the awaited outcome is available.
+The caller continues running, but synchronous work before the first suspending await can still block the current thread.
+
+AWAITING PROMISES
+Awaiting a fulfilled Promise produces its value; awaiting a rejected Promise throws its rejection reason into the async function.
+Use `try...catch` around the await to handle the rejection, or let it propagate through the async function's returned Promise.
+
+ASYNC ERROR HANDLING
+A synchronous `try...catch` does not catch a later rejection from a Promise that is neither awaited nor returned into the relevant chain.
+Place `await` inside the try block or attach `.catch()`; rethrow when higher layers need to know the operation failed.
+
+SEQUENTIAL AWAIT
+Sequential awaits are appropriate when a later operation depends on an earlier result or when ordered side effects are required.
+For independent operations, sequential awaits add their waiting times and may unnecessarily increase total latency.
+
+PARALLEL EXECUTION WITH PROMISE.ALL
+Start independent Promises before awaiting `Promise.all()` so their work can overlap; results are returned in input order.
+One rejection rejects the aggregate but does not cancel the other operations, so decide whether cancellation or partial-result handling is needed.
+
+ASYNC LOOPS
+Use `for...of` with `await` for sequential processing; use `Promise.all(items.map(...))` for concurrent processing when safe.
+For large collections, use bounded concurrency rather than launching every operation at once; account for ordering and failure policy.
+
+ASYNC CALLBACKS
+An async callback returns a Promise, but APIs such as `forEach()` and DOM event listeners generally do not automatically await that Promise.
+Handle errors inside the callback or explicitly collect/await returned Promises; do not assume the caller tracks async completion.
+
+ASYNC ITERATORS
+An async iterator exposes `next()` results asynchronously, typically as Promises resolving to `{ value, done }`.
+Async generators (`async function*`) can yield values over time and support incremental processing of streams or paginated data.
+
+FOR AWAIT...OF
+`for await...of` awaits each iterator result and consumes async iterables one value at a time; it can also consume synchronous iterables.
+It is useful for streams and incremental processing, but sequential consumption may limit throughput when independent items could safely overlap.
+
+COMMON ASYNC/AWAIT MISTAKES
+Common mistakes include missing `await`/`return`, sequentially awaiting independent work, using async callbacks with `forEach()`, and ignoring rejected Promises.
+Also avoid assuming await runs CPU work in the background, Promise rejection cancels work, fetch rejects on HTTP errors, or unlimited concurrency is safe.
+
+FETCH HTTP STATUS
+`fetch()` generally fulfills for HTTP statuses such as 404 or 500; check `response.ok` or `response.status` explicitly.
+Network failures and aborts reject, while parsing the response body is a separate asynchronous step that can also fail.
+
+PERFORMANCE AND COMPLEXITY
+For n independent tasks, unbounded parallelism may reduce wall-clock time but increases resource demand; sequential time often accumulates across tasks.
+A concurrency limit k bounds in-flight work; total result storage may still be O(n), and actual latency depends on task durations and external limits.
+
+SECURITY AND RELIABILITY
+Validate remote data, handle failures explicitly, avoid leaking sensitive errors, and do not assume cancellation reverses server-side effects.
+Use timeouts, retries with backoff/jitter, concurrency limits, and idempotency where appropriate; prevent retry storms and unbounded resource use.
+
+INTERVIEW MENTAL MODEL
+Start work -> represent completion -> schedule continuation -> compose results -> handle success/failure -> manage cancellation and resources.
+Promise represents an outcome, await suspends a function, and the host runtime controls timers/I/O scheduling; none automatically guarantees parallel CPU execution.

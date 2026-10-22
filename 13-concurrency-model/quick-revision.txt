@@ -1,0 +1,121 @@
+JAVASCRIPT EVENT LOOP & CONCURRENCY MODEL — REVISION NOTES
+
+1. CALL STACK
+- Stores execution contexts of currently running functions and follows LIFO (Last In, First Out).
+- JavaScript executes synchronous code on the stack; a function is removed after it finishes.
+
+2. HEAP
+- Memory area used to store objects, arrays, and other dynamically allocated data.
+- The stack may hold references to heap objects; unreachable objects can be reclaimed by garbage collection.
+
+3. EVENT LOOP
+- Coordinates execution between synchronous code, queued callbacks, and asynchronous operations.
+- It processes eligible queued work when the call stack is available, following host-specific rules.
+
+4. TASK QUEUE
+- Holds scheduled tasks such as timer callbacks and many event callbacks.
+- A task generally runs only after the current JavaScript execution and the required microtask checkpoint.
+
+5. MICROTASK QUEUE
+- Holds promise reaction callbacks, queueMicrotask callbacks, and similar scheduled work.
+- Microtasks are processed at microtask checkpoints, usually until the queue is empty.
+
+6. MACROTASKS
+- Commonly used informal term for tasks such as setTimeout callbacks and event callbacks.
+- The HTML standard calls these tasks; a task runs separately from the microtask checkpoint.
+
+7. MICROTASKS
+- Common examples include Promise.then(), Promise.catch(), Promise.finally(), and queueMicrotask().
+- Microtasks normally run before the event loop moves on to another task or rendering opportunity.
+
+8. PROMISE CALLBACKS
+- then(), catch(), and finally() handlers are scheduled as microtasks when their promises settle.
+- Synchronous code finishes first; queued promise handlers then run at a microtask checkpoint.
+
+9. queueMicrotask()
+- Schedules a callback directly in the microtask queue without creating a promise.
+- Useful for deferring work until the current synchronous execution completes.
+
+10. setTimeout()
+- Schedules a callback to become eligible after a specified minimum delay.
+- The delay is not an exact execution time; stack activity and queued work can postpone it.
+
+11. setInterval()
+- Repeatedly schedules a callback at a configured interval.
+- Long-running callbacks can cause delays; recursive setTimeout may be better when work must not overlap.
+
+12. RENDERING OPPORTUNITIES
+- Browsers may update rendering between tasks when appropriate; rendering is not guaranteed after every callback.
+- Long synchronous tasks and excessive microtasks can delay painting and make the interface feel unresponsive.
+
+13. EVENT-LOOP STARVATION
+- Occurs when continuous work prevents the event loop from progressing to other tasks or rendering.
+- Break heavy work into smaller chunks or use workers to keep the main thread responsive.
+
+14. MICROTASK STARVATION
+- Happens when microtasks continuously enqueue more microtasks, delaying tasks and browser rendering.
+- Avoid unbounded recursive queueMicrotask() or promise chains that never allow the queue to drain.
+
+15. BROWSER EVENT LOOP
+- Handles JavaScript tasks, microtasks, user events, timers, and rendering opportunities.
+- Browser APIs may perform work outside the JavaScript thread and schedule callbacks when appropriate.
+
+16. NODE.JS EVENT LOOP
+- Coordinates JavaScript callbacks with timers, operating-system events, and asynchronous I/O.
+- Node.js uses libuv and has phases; callback ordering can differ from browser behavior.
+
+17. NODE.JS TIMERS
+- The timers phase runs eligible setTimeout() and setInterval() callbacks.
+- Timer thresholds indicate when callbacks become eligible, not guaranteed execution times.
+
+18. I/O CALLBACKS
+- Node.js handles many asynchronous I/O operations through operating-system facilities or its thread pool.
+- Their callbacks run when the relevant operation completes and the event loop reaches the appropriate stage.
+
+19. POLL PHASE
+- Handles many I/O callbacks and may wait for I/O when appropriate.
+- Its behavior depends on available callbacks, timers, and the current event-loop state.
+
+20. CHECK PHASE
+- Runs setImmediate() callbacks in Node.js.
+- setImmediate() is commonly useful for scheduling work after I/O callbacks in the check phase.
+
+21. CLOSE CALLBACKS
+- Handle certain close events, such as a socket's close event.
+- They run in Node.js's close-callback phase when the corresponding event is ready.
+
+22. setImmediate()
+- Schedules a callback for Node.js's check phase.
+- Its ordering relative to setTimeout(fn, 0) can depend on context and timing.
+
+23. process.nextTick()
+- Schedules a callback in Node.js's next-tick queue, which is processed before the event loop continues.
+- Excessive recursive nextTick callbacks can starve I/O and other event-loop work.
+
+24. process.nextTick() VS queueMicrotask()
+- process.nextTick() uses Node.js's special next-tick queue; queueMicrotask() uses the microtask queue.
+- Prefer queueMicrotask() for portable microtask scheduling; use nextTick() when Node-specific ordering is needed.
+
+25. setTimeout() VS setInterval()
+- setTimeout() schedules a callback once, while setInterval() schedules repeated callbacks.
+- Neither guarantees exact timing; use recursive setTimeout() when each run should follow completion of the previous run.
+
+26. TASK VS MICROTASK
+- Tasks include timer and event callbacks; microtasks include promise reactions and queueMicrotask callbacks.
+- After a task's JavaScript finishes, the microtask checkpoint generally runs before the next task.
+
+27. SYNCHRONOUS VS ASYNCHRONOUS
+- Synchronous code executes immediately in sequence and blocks further JavaScript on the same thread until it finishes.
+- Asynchronous APIs allow work to complete later and schedule callbacks or promise reactions for subsequent execution.
+
+28. OUTPUT-BASED QUESTIONS
+- First execute all synchronous statements and track the call stack in program order.
+- Then identify queued microtasks and tasks, remembering that Node.js has additional scheduling rules.
+
+29. BROWSER VS NODE.JS
+- Browsers add rendering and user-interface event processing to their event-loop model.
+- Node.js uses libuv phases and the next-tick queue; do not assume all browser ordering rules apply unchanged.
+
+30. CORE EXECUTION ORDER
+- Run synchronous JavaScript first; then process queued microtasks at the appropriate checkpoint.
+- Continue with eligible tasks and host-specific work; rendering and exact callback ordering depend on the environment.

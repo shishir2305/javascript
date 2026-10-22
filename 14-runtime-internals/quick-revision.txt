@@ -1,0 +1,36 @@
+
+JavaScript Engine: Executes JavaScript and manages engine-level execution, optimization, and memory. Examples: V8, SpiderMonkey, JavaScriptCore.
+
+Parser: Analyzes source-code syntax and produces an internal representation. Invalid syntax can cause a SyntaxError before execution.
+
+AST: A tree representing source-code structure. Used by compilers, linters, formatters, and static-analysis tools.
+
+Bytecode: Intermediate instructions interpreted by a runtime or virtual machine. It is different from native machine code.
+
+Interpreter: Executes instructions at runtime. It can start execution without compiling every function into optimized machine code.
+
+JIT Compiler: Compiles code during execution. Runtime feedback can help it generate faster code.
+
+Optimizing Compiler: Applies transformations such as inlining and specialization to improve execution efficiency.
+
+Deoptimization: Leaves optimized execution when assumptions or conditions require a less-specialized path.
+
+Inline Cache: Stores feedback about a particular operation to accelerate repeated operations, such as property access.
+
+Hidden Classes: V8 terminology for internal object-layout metadata, commonly called Maps.
+
+Shapes: General term for object-structure metadata. Different engines use different internal representations.
+
+Monomorphic: An operation has observed one relevant input shape or type pattern.
+
+Polymorphic: An operation has observed a small set of relevant shapes or type patterns.
+
+Megamorphic: An operation has encountered many shapes or type patterns, potentially limiting specialization.
+
+Speculative Optimization: Generates faster code based on observed behavior and assumptions guarded by runtime checks.
+
+Bailout: Abandons a specialized execution path when it cannot safely continue under current conditions.
+
+Garbage Collector: Reclaims memory used by unreachable objects. Reachability, not circular references alone, determines collectibility.
+
+Runtime APIs: Host-provided capabilities such as browser DOM APIs, fetch(), timers, and Node.js file-system APIs.
